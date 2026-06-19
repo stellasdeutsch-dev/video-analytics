@@ -3,6 +3,7 @@
 > Turn raw video into structured insight: detect objects with **YOLO**, track them across frames with persistent IDs, and compute **line-crossing counts, ROI dwell times, movement heatmaps, trajectories, and speed** — viewable in a **Streamlit dashboard**.
 
 <p>
+  <a href="https://github.com/stellasdeutsch-dev/video-analytics/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/stellasdeutsch-dev/video-analytics/actions/workflows/ci.yml/badge.svg"></a>
   <img alt="Python" src="https://img.shields.io/badge/python-3.10%E2%80%933.12-blue">
   <img alt="License" src="https://img.shields.io/badge/license-MIT-green">
   <img alt="Status" src="https://img.shields.io/badge/status-portfolio%20project-orange">
