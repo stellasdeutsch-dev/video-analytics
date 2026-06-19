@@ -1,0 +1,29 @@
+# End-to-end pipeline (detect -> track -> analytics -> outputs)
+source: data/videos/sample.mp4
+out_dir: data/run
+video_fps: 30.0
+annotate_video: true        # render annotated.mp4 (needs OpenCV)
+
+detect:
+  model: yolo11n.pt
+  conf: 0.25
+  iou: 0.7
+  imgsz: 640
+  classes: null
+  device: auto
+  half: true
+
+track:
+  iou_threshold: 0.3
+  max_age: 30
+  min_hits: 3
+
+analytics:
+  heatmap_grid: [64, 36]
+  meters_per_pixel: null
+  lines:
+    - name: main_road
+      points: [[0, 360], [1280, 360]]
+  zones:
+    - name: junction
+      polygon: [[100, 100], [300, 100], [300, 300], [100, 300]]

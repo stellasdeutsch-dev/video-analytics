@@ -1,0 +1,7 @@
+# Tracking stage (IoU/SORT-style tracker — pure NumPy)
+detections_path: data/detections.parquet
+tracks_path: data/tracks.parquet
+iou_threshold: 0.3          # min IoU to associate a detection with a track
+max_age: 30                 # frames a lost track survives before deletion
+min_hits: 3                 # frames before a track is confirmed/emitted
+classes: null               # restrict tracking to these class ids (null = all)

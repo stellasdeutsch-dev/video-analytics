@@ -1,0 +1,12 @@
+# Detection stage (heavy — run on GPU via SLURM)
+model: yolo11n.pt            # Ultralytics auto-downloads (use yolo11s/m/x for accuracy)
+source: data/videos/sample.mp4
+detections_path: data/detections.parquet
+meta_path: data/video_meta.json
+conf: 0.25
+iou: 0.7
+imgsz: 640
+classes: null               # null = all; COCO ids e.g. [0]=person, [2,3,5,7]=vehicles
+device: auto                # auto | cuda | mps | cpu
+half: true                  # fp16 (effective on CUDA)
+video_fps: 30.0             # used for meta if not probed

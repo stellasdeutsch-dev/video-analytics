@@ -1,0 +1,17 @@
+# Analytics stage
+tracks_path: data/tracks.parquet
+meta_path: data/video_meta.json
+out_dir: data/run/analytics
+fps: 30.0                    # fallback if meta_path missing
+heatmap_grid: [64, 36]      # [cols, rows]
+meters_per_pixel: null      # set for real-world speed (else speed reported in px/s)
+
+# Counting lines: each a segment [[x1,y1],[x2,y2]]
+lines:
+  - name: main_road
+    points: [[0, 360], [1280, 360]]
+
+# Regions of interest (polygons) for dwell/occupancy
+zones:
+  - name: junction
+    polygon: [[100, 100], [300, 100], [300, 300], [100, 300]]
