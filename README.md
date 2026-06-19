@@ -97,6 +97,17 @@ VIDANALYTICS_OUT=data/run/analytics streamlit run web/dashboard.py
 Or run stages separately: `python -m src.detect ...` → `python -m src.track ...` → `python -m src.analytics ...`.
 Datasets to try: **UA-DETRAC**, **VisDrone**, **MOT17/20**, or your own footage.
 
+### Compare YOLO models (speed vs. accuracy)
+
+Benchmark several detectors on the same clip — FPS, detection volume, confidence, track count, and line-crossing counts side by side:
+
+```bash
+# edit configs/compare.yaml:models (e.g. yolo11n/s/m/x), then on the GPU:
+sbatch slurm/compare.slurm          # or: python -m src.benchmark --config configs/compare.yaml
+```
+
+Writes `data/compare/comparison.md` (a Markdown table), `comparison.parquet`, and a `comparison.png` FPS chart — paste the table into the results section to show the speed/accuracy trade-off.
+
 ---
 
 ## 📁 Repo structure

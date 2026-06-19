@@ -1,0 +1,22 @@
+# Model comparison (heavy — run on GPU via slurm/compare.slurm)
+source: data/videos/sample.mp4
+models:                      # Ultralytics auto-downloads each
+  - yolo11n.pt
+  - yolo11s.pt
+  - yolo11m.pt
+out_dir: data/compare
+conf: 0.25
+iou: 0.7
+imgsz: 640
+classes: null
+device: auto
+half: true
+
+# downstream counting (per model) for an accuracy-vs-speed comparison
+track:
+  iou_threshold: 0.3
+  max_age: 30
+  min_hits: 3
+lines:
+  - name: main_road
+    points: [[0, 360], [1280, 360]]

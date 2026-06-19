@@ -24,6 +24,9 @@ analytics:  ## Compute counts / zones / heatmap from tracks
 pipeline:  ## Full pipeline on a video (detect -> track -> analytics)
 	python -m src.pipeline --config $(CONFIG_DIR)/pipeline.yaml
 
+compare:  ## Benchmark multiple YOLO models (GPU; speed + counting)
+	python -m src.benchmark --config $(CONFIG_DIR)/compare.yaml
+
 dashboard:  ## Launch the Streamlit dashboard
 	VIDANALYTICS_OUT=data/run/analytics streamlit run web/dashboard.py
 

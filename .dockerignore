@@ -1,0 +1,15 @@
+.git
+.github
+.venv
+venv
+__pycache__
+*.pyc
+.pytest_cache
+.ruff_cache
+data/*
+!data/.gitkeep
+logs
+runs
+*.mp4
+*.pt
+.DS_Store
