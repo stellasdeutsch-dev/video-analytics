@@ -14,6 +14,7 @@ import logging
 import numpy as np
 
 from .common import load_config, load_json, orient, points_in_polygon, save_json, segments_intersect, setup_logging
+from .schema import validate_tracks
 
 log = logging.getLogger("vidanalytics")
 
@@ -152,7 +153,7 @@ def run(tracks_df, params: dict, fps: float, width: float, height: float, out_di
 def run_from_config(cfg: dict) -> dict:
     import pandas as pd
 
-    df = pd.read_parquet(cfg["tracks_path"])
+    df = validate_tracks(pd.read_parquet(cfg["tracks_path"]))
     fps = cfg.get("fps", 30.0)
     width = height = 0
     if cfg.get("meta_path"):

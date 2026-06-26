@@ -147,6 +147,25 @@ Fill in after running `eval/evaluate.py` (counting) and your MOT/COCO sets (mAP 
 
 ---
 
+## 🧩 Extending this
+
+Stages are decoupled by an explicit, validated parquet contract (`src/schema.py`), so each swaps independently:
+
+| Want to… | Change | Why it's isolated |
+|---|---|---|
+| Swap the detector | `src/detect.py` (any model that writes the `DETECTION_COLUMNS` table) | track/analytics only read the contract, never the model. |
+| Swap the tracker (ByteTrack/BoT-SORT/DeepSORT) | replace `SimpleTracker` in `src/track.py` | as long as it emits the `TRACK_COLUMNS` table, analytics is unchanged. |
+| Add an analytic (new metric/zone) | add a pure function in `src/analytics.py` and wire it in `run()` | analytics consumes the tracks contract + a params dict. |
+| Add a model to the comparison | `configs/compare.yaml:models` | `src/benchmark.py` loops the list. |
+
+## ⚠️ Limitations & design notes
+
+Honest scoping (the tracker is a hand-rolled teaching implementation, not a production SORT):
+
+- **Greedy IoU association, no motion model.** `SimpleTracker` matches by greedy max-IoU; it has no Kalman filter / velocity prediction and uses greedy (not Hungarian) assignment, so fast-moving or briefly-occluded objects are dropped more readily than a full SORT/ByteTrack. Swap in Ultralytics' built-in ByteTrack/BoT-SORT for production (same data contract).
+- **No per-frame emission on missed frames.** A track that misses a single detection emits no row that frame, so the *active-tracks time-series* can undercount with a flickering detector. Trajectory analytics (counts, dwell, speed) are unaffected.
+- **Counting** uses centroid line-crossings; very large objects or steep camera angles may need zone-based counting instead.
+
 ## 📜 License
 
 MIT — see [LICENSE](LICENSE).

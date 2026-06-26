@@ -14,6 +14,7 @@ import logging
 import numpy as np
 
 from .common import iou_matrix, load_config, setup_logging
+from .schema import TRACK_COLUMNS, validate_detections, validate_tracks
 
 log = logging.getLogger("vidanalytics")
 
@@ -31,7 +32,12 @@ class SimpleTracker:
 
     def update(self, dets) -> np.ndarray:
         """dets: (N,6) [x1,y1,x2,y2,score,class_id]. Returns (M,7)
-        [track_id,x1,y1,x2,y2,score,class_id] for tracks updated this frame."""
+        [track_id,x1,y1,x2,y2,score,class_id] for tracks updated this frame.
+
+        A track not matched on a given frame emits nothing until re-matched, so a
+        sparse/flickering detector can leave single-frame gaps in the per-frame
+        active-track counts. Trajectory analytics (crossings, dwell, speed) are
+        unaffected because build_trajectories only sorts the points it has."""
         self._frame += 1
         dets = np.asarray(dets, dtype=float).reshape(-1, 6) if dets is not None else np.zeros((0, 6))
         n_det = len(dets)
@@ -83,7 +89,7 @@ class SimpleTracker:
 def run(cfg: dict):
     import pandas as pd
 
-    df = pd.read_parquet(cfg["detections_path"]).sort_values("frame")
+    df = validate_detections(pd.read_parquet(cfg["detections_path"])).sort_values("frame")
     names = {int(r.class_id): r.class_name for r in df[["class_id", "class_name"]].drop_duplicates().itertuples()}
     keep = cfg.get("classes")
     tracker = SimpleTracker(cfg.get("iou_threshold", 0.3), cfg.get("max_age", 30), cfg.get("min_hits", 3))
@@ -99,7 +105,8 @@ def run(cfg: dict):
                          "x2": x2, "y2": y2, "score": score, "class_id": int(cid),
                          "class_name": names.get(int(cid), str(int(cid)))})
 
-    out = pd.DataFrame(rows)
+    out = pd.DataFrame(rows, columns=TRACK_COLUMNS)   # explicit cols keep schema when empty
+    validate_tracks(out)
     out.to_parquet(cfg["tracks_path"], index=False)
     n_tracks = out["track_id"].nunique() if len(out) else 0
     log.info("Tracked %d detections into %d tracks -> %s", len(out), n_tracks, cfg["tracks_path"])

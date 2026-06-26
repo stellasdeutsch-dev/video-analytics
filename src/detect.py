@@ -53,8 +53,9 @@ def run(cfg: dict):
         if frame_idx % 100 == 0 and frame_idx:
             log.info("frame %d  (%.1f fps)", frame_idx, n_frames / (time.time() - t0))
 
-    df = pd.DataFrame(rows, columns=["frame", "class_id", "class_name", "score",
-                                     "x1", "y1", "x2", "y2"])
+    from .schema import DETECTION_COLUMNS, validate_detections
+    df = pd.DataFrame(rows, columns=DETECTION_COLUMNS)
+    validate_detections(df)
     df.to_parquet(cfg["detections_path"], index=False)
     fps_proc = n_frames / max(time.time() - t0, 1e-9)
     log.info("Detected %d boxes over %d frames (%.1f fps) -> %s",

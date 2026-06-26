@@ -33,9 +33,9 @@ def run(cfg: dict) -> dict:
                "video_fps": cfg.get("video_fps", 30.0)}
     detect_mod.run(det_cfg)
 
-    # 2) track
+    # 2) track  (detect already applied the class filter; track keeps only its own optional classes)
     track_mod.run({**cfg.get("track", {}), "detections_path": str(det_path),
-                   "tracks_path": str(trk_path), "classes": cfg.get("detect", {}).get("classes")})
+                   "tracks_path": str(trk_path)})
 
     # 3) analytics
     tracks_df = pd.read_parquet(trk_path)
